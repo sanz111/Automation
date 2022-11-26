@@ -1,0 +1,15 @@
+Bypass 403 Forbidden HTTP response status code:
+count=0; for subdomain in $(cat subdomains_403.txt); do count=$((count+1)); echo "#${count} | ${subdomain}"; python3 forbidden.py -u "${subdomain}" -t methods,method-overrides,scheme-overrides,port-overrides,headers,paths,encodings -f GET -l base,path -o "forbidden_403_results_${count}.json"; done
+
+Bypass 403 Forbidden HTTP response status code with stress testing:
+count=0; for subdomain in $(cat subdomains_403.txt); do count=$((count+1)); echo "#${count} | ${subdomain}"; python3 stresser.py -u "${subdomain}" -dir "stresser_403_results_${count}" -r 1000 -th 200 -f GET -l base -o "stresser_403_results_${count}.json"; done
+
+Bypass 401 Unauthorized HTTP response status code:
+count=0; for subdomain in $(cat subdomains_401.txt); do count=$((count+1)); echo "#${count} | ${subdomain}"; python3 forbidden.py -u "${subdomain}" -t auths -f GET -l base -o "forbidden_401_results_${count}.json"; done
+
+Scan for open redirects and server-side request forgery (SSRF):
+count=0; for subdomain in $(cat subdomains_live_long.txt); do count=$((count+1)); echo "#${count} | ${subdomain}"; python3 forbidden.py -u "${subdomain}" -t redirects -f GET -l base -e xyz.interact.sh -o "forbidden_redirect_results_${count}.json"; done
+
+Scan for broken URL parsers:
+count=0; for subdomain in $(cat subdomains_live_long.txt); do count=$((count+1)); echo "#${count} | ${subdomain}"; python3 forbidden.py -u "${subdomain}" -t parsers -f GET -l base -e xyz.interact.sh -o "forbidden_parser_results_${count}.json"; done
+
