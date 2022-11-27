@@ -1,3 +1,11 @@
+One Liner to fetch target list from https://chaos-data.projectdiscovery.io
+--------------------------------------------------------------------------
+mkdir chaos; cd $_; curl -s https://chaos-data.projectdiscovery.io/index.json | jq -r '.[] | select( .bounty == true ) | .URL' | xargs -I% wget -q --show-progress %; unzip '*.zip'; rm *.zip
+
+One Liner to fetch target list from github.com/projectdiscovery/public-bugbounty-programs
+-----------------------------------------------------------------------------------------
+curl -s https://raw.githubusercontent.com/projectdiscovery/public-bugbounty-programs/master/chaos-bugbounty-list.json | jq -r '.programs[] | select( .bounty == true ) | .domains[]'
+
 BBRF SCOPE DoD
 ---------------
 bbrf inscope add '*.af.mil' '*.osd.mil' '*.marines.mil' '*.pentagon.mil' '*.disa.mil' '*.health.mil' '*.dau.mil' '*.dtra.mil' '*.ng.mil' '*.dds.mil' '*.uscg.mil' '*.army.mil' '*.dcma.mil' '*.dla.mil' '*.dtic.mil' '*.yellowribbon.mil' '*.socom.mil'
