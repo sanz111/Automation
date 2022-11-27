@@ -1,0 +1,33 @@
+domain Takeover for beginners | Bug Bounty | Cybersec
+
+ 
+
+Wace) Hostilesubbrutetorcer?
+
+->Description:A sub domain takeover is a situation where a malicious person is able to claim a
+subdomain on behalf of a legitimate site.This type of vulnerability involves a site creating a
+DNS entry for a sub domain.
+
+How to add Hostilesubbruteforcer to your kali ?
+
+->Setup Steps:
+
+1)cd Desktop
+
+2)git clone https://github.com/nahamsec/HostileSubBruteforcer.git
+3)cd Host(press tab) and then (enter)
+
+4)1s(enter)
+
+5)ruby sub (press tab and then enter)
+
+What to see or do once you installed Hostilesubbruteforcer?
+
+1)After starting the above just enter your domain name.
+2)Wait for 404 and check in the browser if it is still not found.
+3)Go for exploit using the data in https://github.com/EdOverflow/can-i-take-over-xyz. &
+
+ 
+
+ 
+

