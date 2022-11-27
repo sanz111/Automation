@@ -1,5 +1,5 @@
-nuclei -l alive.txt -t /home/cyberlipon/nuclei-templates/cves | tee output.txt
-------------------------------------------------------------------------------
+nuclei -l alive.txt -t /home/cyberlipon/nuclei-templates -es info | tee output.txt
+----------------------------------------------------------------------------------
 # nuclei -l alive.txt -t /nuclei-templates/ -es info | tee output.txt
 # wc dns.txt
 # cat dns.txt | head -n 200
