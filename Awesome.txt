@@ -1,49 +1,50 @@
 Using awk you can extract a domain name from an URL:
+----------------------------------------------------
 cat DutchGov.txt | awk -F[/:] '{print $4}'
 cat live.txt | awk -F[//:] '{print $4}'
 
-
-
+Rohit Gautam ---> https://github.com/shifa123
+---------------------------------------------
 subdomain-finder : ( ./crt.sh hackerone.com )
 waybackurlsbash : ( ./waybackurls.sh and hit Enter then put your target name )
 urlstodomain : ( cat domainswithurls.txt| ./urlstodomain.sh )
 
-
-
-
-
-
-
-
-
 -------------------------------------------------------------------------------------------
 SQLiDetector > python3 sqlidetector.py -f urls.txt -w 50 -o output.txt -t 10
 -------------------------------------------------------------------------------------------
+
 Filter active hostnames from the list of passive subdomains, obtained from various sources:
+-------------------------------------------------------------------------------------------
 subfinder -silent -d hackerone.com | dnsx -silent
 
 Print A records for the given list of subdomains:
+-------------------------------------------------
 subfinder -silent -d hackerone.com | dnsx -silent -a -resp
 
 Extract A records for the given list of subdomains:
+---------------------------------------------------
 subfinder -silent -d hackerone.com | dnsx -silent -a -resp-only
 
 Extract CNAME records for the given list of subdomains:
+-------------------------------------------------------
 subfinder -silent -d hackerone.com | dnsx -silent -cname -resp
 
 Bruteforce subdomains for given domain or list of domains using d and w flag:
+-----------------------------------------------------------------------------
 dnsx -silent -d facebook.com -w dns_worldlist.txt
 
 cat domains.txt | dnsx -silent -w jira,grafana,jenkins -d -
-------------------------------------------------------------------------------------------
+
 DalFox - Multiple target mode from file
+---------------------------------------
 ▶ dalfox file urls_file --custom-payload ./mypayloads.txt
 
 To perform a full recon on single target
+----------------------------------------
 ./reconftw.sh -d target.com -r
 
 To perform a full recon on a list of targets
+--------------------------------------------
 ./reconftw.sh -l sites.txt -r -o /output/directory/
------------------------------------------------------------------------------------------
 
 
